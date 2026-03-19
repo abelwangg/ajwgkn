@@ -71,7 +71,7 @@ export default function WordleTracker() {
       <div className="max-w-md mx-auto space-y-8 mt-6">
 
         {/* The Copyright Message */}
-        <div className="text-center text-xs text-neutral-500 font-medium tracking-widest uppercase">
+        <div className="text-center text-xs text-neutral-900 font-medium tracking-widest uppercase">
           © 2026 Abel Wang
         </div>
 
