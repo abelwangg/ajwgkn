@@ -60,7 +60,14 @@ export default function WordleTracker() {
   });
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-100 p-4 font-sans selection:bg-pink-500/30 bg-[url('/bg.jpg')] bg-cover bg-center bg-blend-overlay bg-fixed">
+    <main className="relative min-h-screen text-neutral-100 p-4 font-sans selection:bg-pink-500/30">
+      
+      {/* Layer 1: The Fixed Background Image */}
+      <div className="fixed inset-0 -z-20 h-full w-full bg-[url('/bg.jpg')] bg-cover bg-center"></div>
+      
+      {/* Layer 2: The Brightness Tint (Change the /40 to adjust!) */}
+      <div className="fixed inset-0 -z-10 h-full w-full bg-neutral-950/40"></div>
+
       <div className="max-w-md mx-auto space-y-8 mt-6">
 
         {/* The Copyright Message */}
