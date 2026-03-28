@@ -9,6 +9,13 @@ export default function WordleTracker() {
   const [tag, setTag] = useState("Normal");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
+  // New state variables for the lock system
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+
+  //change passcode
+  const SECRET_PASSCODE = "28";
+
   // Fetch past scores when the page loads
   useEffect(() => {
     fetchScores();
@@ -21,6 +28,17 @@ export default function WordleTracker() {
       .order("played_date", { ascending: false });
     
     if (data) setScores(data);
+  }
+
+  //Handle password submission
+  function handleUnlock(e: React.FormEvent) {
+    e.preventDefault();
+    if (passwordInput === SECRET_PASSCODE) {
+      setIsUnlocked(true);
+    } else {
+      alert("Nice try.");
+      setPasswordInput(""); // Clear the input if they guess wrong
+    }
   }
 
   // Handle submitting a new score
@@ -65,7 +83,7 @@ export default function WordleTracker() {
       {/* Layer 1: The Fixed Background Image */}
       <div className="fixed inset-0 -z-20 h-full w-full bg-[url('/bg.jpg')] bg-cover bg-center"></div>
       
-      {/* Layer 2: The Brightness Tint (Change the /40 to adjust!) */}
+      {/* Layer 2: The Brightness Tint */}
       <div className="fixed inset-0 -z-10 h-full w-full bg-neutral-950/40"></div>
 
       <div className="max-w-md mx-auto space-y-8 mt-6">
@@ -83,55 +101,75 @@ export default function WordleTracker() {
           <p className="text-neutral-500 text-sm font-medium uppercase tracking-widest">Wordle Tracker</p>
         </div>
 
-        {/* The Input Form */}
-        <form onSubmit={submitScore} className="flex flex-col gap-5 backdrop-blur-md bg-neutral-900/60 p-6 rounded-3xl border border-neutral-800 shadow-xl">
-          <h2 className="text-xl font-bold">Log Today's Match</h2>
-
-          <div>
-            <label className="block text-sm font-medium text-neutral-400 mb-2">Date</label>
+        {/* Conditional Rendering: Locked Box OR Input Form */}
+        {!isUnlocked ? (
+          <form onSubmit={handleUnlock} className="flex flex-col gap-4 backdrop-blur-md bg-neutral-900/60 p-6 rounded-3xl border border-neutral-800 shadow-xl text-center">
+            <h2 className="text-xl font-bold">Access</h2>
+            <p className="text-sm text-neutral-400">fav number + fav number =</p>
             <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="block w-full max-w-full box-border bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none [color-scheme:dark]"
+              type="password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              placeholder="Passcode..."
+              className="mt-2 block w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 text-center tracking-widest"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-neutral-400 mb-2">Outcome</label>
-            <select
-              value={outcome}
-              onChange={(e) => setOutcome(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none cursor-pointer"
+            <button
+              type="submit"
+              className="mt-2 w-full bg-neutral-800 hover:bg-neutral-700 text-white font-bold text-lg py-4 rounded-xl transition-all active:scale-[0.98]"
             >
-              <option value="Abel won">Abel won</option>
-              <option value="Grace won">Grace won</option>
-              <option value="Draw">Draw</option>
-              <option value="-">-</option>
-            </select>
-          </div>
+              Unlock
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={submitScore} className="flex flex-col gap-5 backdrop-blur-md bg-neutral-900/60 p-6 rounded-3xl border border-pink-500/30 shadow-[0_0_30px_-10px_rgba(236,72,153,0.15)] relative overflow-hidden">
+            <h2 className="text-xl font-bold">Log Today's Match</h2>
 
-          <div>
-            <label className="block text-sm font-medium text-neutral-400 mb-2">Special Tag</label>
-            <select
-              value={tag}
-              onChange={(e) => setTag(e.target.value)}
-              className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none cursor-pointer"
+            <div>
+              <label className="block text-sm font-medium text-neutral-400 mb-2">Date</label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="block w-full max-w-full box-border bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none [color-scheme:dark]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-400 mb-2">Outcome</label>
+              <select
+                value={outcome}
+                onChange={(e) => setOutcome(e.target.value)}
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none cursor-pointer"
+              >
+                <option value="Abel won">Abel won</option>
+                <option value="Grace won">Grace won</option>
+                <option value="Draw">Draw</option>
+                <option value="-">-</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-400 mb-2">Special Tag</label>
+              <select
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 appearance-none cursor-pointer"
+              >
+                <option value="Normal">Normal</option>
+                <option value="Tgt😛">Tgt😛</option>
+                <option value="ajw hates gkn ☹️">ajw hates gkn ☹️</option>
+                <option value="FAILED">FAILED</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className="mt-2 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-neutral-950 font-bold text-lg py-4 rounded-xl transition-all active:scale-[0.98]"
             >
-              <option value="Normal">Normal</option>
-              <option value="Tgt😛">Tgt😛</option>
-              <option value="ajw hates gkn ☹️">ajw hates gkn ☹️</option>
-              <option value="FAILED">FAILED</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="mt-2 w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-neutral-950 font-bold text-lg py-4 rounded-xl transition-all active:scale-[0.98]"
-          >
-            Submit Score
-          </button>
-        </form>
+              Submit Score
+            </button>
+          </form>
+        )}
 
         {/* The History Log */}
         <div className="space-y-3 pb-10">
@@ -155,13 +193,16 @@ export default function WordleTracker() {
                     </span>
                   )}
                   
-                  <button 
-                    onClick={() => deleteScore(score.id)}
-                    className="text-neutral-500 hover:text-red-500 transition-colors p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                    title="Delete Match"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                  </button>
+                  {/* Delete button is only rendered if isUnlocked is true! */}
+                  {isUnlocked && (
+                    <button 
+                      onClick={() => deleteScore(score.id)}
+                      className="text-neutral-500 hover:text-red-500 transition-colors p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                      title="Delete Match"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                    </button>
+                  )}
                 </div>
               </div>
             ))
