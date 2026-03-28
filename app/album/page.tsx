@@ -73,6 +73,11 @@ export default function Album() {
             <div className="fixed inset-0 -z-10 h-full w-full bg-neutral-950/40"></div>
 
             <div className="max-w-2xl mx-auto pt-24 pb-12 space-y-8 px-4">
+
+                {/* The Copyright Message */}
+                <div className="text-center text-xs text-neutral-900 font-medium tracking-widest uppercase">
+                © 2026 Abel Wang
+                </div>
                 
                 {/* Header */}
                 <div className="text-center backdrop-blur-md bg-neutral-900/60 p-8 rounded-3xl border border-neutral-800 shadow-[0_0_40px_-10px_rgba(236,72,153,0.25)]">
